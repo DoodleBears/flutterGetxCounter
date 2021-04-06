@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
       home: MyHomePage(),
     );
     // 当你需要用到 GetX 的 Router，snackbar 等
-    // 跟routes有关的功能的时候，才需要写 GetMaterialApp
+    // 跟routes有关的功能的时候，才需要写 GetMaterialApp, 这里我们没用到，所以两个都行
 
     // return GetMaterialApp(
     //   title: 'Flutter Demo',
@@ -30,8 +30,11 @@ class MyApp extends StatelessWidget {
   }
 }
 
+// 可以看到我们这边用的 StatelessWidget
 class MyHomePage extends StatelessWidget {
   // 使用 Get.put() 初始化我们定义的 GetxController
+  // Get.put() source code 实作的方式，其实最后仍是用 find() 去 return 我们的 controller
+  // Get.put() 便是在 put 到 HashMap 后立马用 Get.find() 得到并return
   final CounterLogic counterLogic = Get.put(CounterLogic());
   final CounterLogicObx counterLogicObx = Get.put(CounterLogicObx());
   final CounterLogicSeperatedState counterLogicSeperatedState =
@@ -48,8 +51,6 @@ class MyHomePage extends StatelessWidget {
         title: Text('Counter in GetX'),
       ),
       body: Column(
-        // we render many rows in a column
-        // Vertically Center the texts
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           // 和 StatefulWidget 类似，只是用Builder来包裹，实际相应用的update()
@@ -64,10 +65,7 @@ class MyHomePage extends StatelessWidget {
               );
             },
           ),
-          Divider(
-            color: Colors.black,
-            height: 3.0,
-          ),
+          Divider(color: Colors.black, height: 3.0),
           // GetX 会监听一个流，如这里便是 controller.count.value
           // 一旦流里面的value有改变，便会rebuild
           GetX<CounterLogicObx>(
@@ -153,6 +151,7 @@ class MyHomePage extends StatelessWidget {
               counterLogicSeperatedState.increase();
             },
           ),
+          // substract button
           Container(
             margin: EdgeInsets.symmetric(vertical: 10.0),
             width: double.infinity,
@@ -185,6 +184,7 @@ class MyHomePage extends StatelessWidget {
           ),
         ],
       ),
+      // floating button
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: () {
@@ -200,13 +200,10 @@ class MyHomePage extends StatelessWidget {
 }
 
 class _Button extends StatelessWidget {
-  const _Button({
-    Key key,
-    @required this.onPressed,
-    @required this.text,
-  }) : super(key: key);
-  final Function onPressed;
-  final String text;
+  const _Button({Key key, @required this.onPressed, @required this.text})
+      : super(key: key);
+  final Function onPressed; // used to define button press effect(function)
+  final String text; // text show on button
 
   @override
   Widget build(BuildContext context) {
@@ -218,7 +215,7 @@ class _Button extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 10.0),
         child: OutlinedButton.icon(
           label: Text(
-            text,
+            text, // take text get from outside
             style: TextStyle(fontSize: 20.0),
           ),
           icon: Icon(Icons.add),
@@ -229,6 +226,7 @@ class _Button extends StatelessWidget {
               borderRadius: BorderRadius.all(Radius.circular(6.0)),
             ),
           ),
+          // take function get from outside
           onPressed: onPressed,
         ),
       ),

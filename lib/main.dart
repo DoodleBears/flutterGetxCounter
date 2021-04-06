@@ -50,7 +50,7 @@ class MyHomePage extends StatelessWidget {
       body: Column(
         // we render many rows in a column
         // Vertically Center the texts
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           // 和 StatefulWidget 类似，只是用Builder来包裹，实际相应用的update()
           // update() 对应的 StatefulWidget 的 setState()
@@ -72,7 +72,7 @@ class MyHomePage extends StatelessWidget {
           // 一旦流里面的value有改变，便会rebuild
           GetX<CounterLogicObx>(
             builder: (controller) {
-              print('build counter_2');
+              print('build counter_2 in GetX');
               return Text(
                 '采用GetX: 点击了 ${controller.count} 次',
                 style: TextStyle(fontSize: 30.0),
@@ -97,7 +97,7 @@ class MyHomePage extends StatelessWidget {
           // 但实际在引用value的时候没有提示，如下面的 counterLogicObx
           Obx(
             () {
-              print('build counter_2');
+              print('build counter_2 in Obx');
               return Text(
                 '采用Obx: 点击了 ${counterLogicObx.count} 次',
                 style: TextStyle(fontSize: 30.0),
@@ -121,34 +121,117 @@ class MyHomePage extends StatelessWidget {
               );
             },
           ),
-          TextButton.icon(
-            label: Text('Add'),
-            icon: Icon(Icons.add),
+          _Button(
+            text: 'Add all',
             onPressed: () {
+              print('---------------------------Add all');
               counterLogic.increase();
               counterLogic.update();
               counterLogicObx.increase();
               counterLogicSeperatedState.increase();
             },
           ),
-          TextButton.icon(
-            label: Text('Substract'),
-            icon: Icon(Icons.remove),
+          _Button(
+            text: 'Add GetBuilder',
             onPressed: () {
-              counterLogic.decrease();
+              print('---------------------------Add GetBuilder');
+              counterLogic.increase();
               counterLogic.update();
             },
-          )
+          ),
+          _Button(
+            text: 'Add GetX and Obx',
+            onPressed: () {
+              print('---------------------------Add GetX and Obx');
+              counterLogicObx.increase();
+            },
+          ),
+          _Button(
+            text: 'Add Obx (Seperated State)',
+            onPressed: () {
+              print('---------------------------Add Obx (Seperated State)');
+              counterLogicSeperatedState.increase();
+            },
+          ),
+          Container(
+            margin: EdgeInsets.symmetric(vertical: 10.0),
+            width: double.infinity,
+            height: 60.0,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+              child: OutlinedButton.icon(
+                label: Text(
+                  'Substract all',
+                  style: TextStyle(fontSize: 20.0),
+                ),
+                icon: Icon(Icons.remove),
+                onPressed: () {
+                  print('---------------------------Substract all');
+                  counterLogic.decrease();
+                  counterLogic.update();
+                  counterLogicObx.decrease();
+                  counterLogicSeperatedState.decrease();
+                },
+                style: TextButton.styleFrom(
+                  primary: Colors.red,
+                  backgroundColor: Colors.red[50],
+                  side: BorderSide(width: 1.0, color: Colors.red),
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(6.0)),
+                  ),
+                ),
+              ),
+            ),
+          ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: () {
+          print('---------------------------Add all');
           counterLogic.increase();
+          counterLogic.update(); // what if we don't call update(), try it out
           counterLogicObx.increase();
           counterLogicSeperatedState.increase();
         },
       ), // This trailing comma makes auto-formatting nicer for build methods.
+    );
+  }
+}
+
+class _Button extends StatelessWidget {
+  const _Button({
+    Key key,
+    @required this.onPressed,
+    @required this.text,
+  }) : super(key: key);
+  final Function onPressed;
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 10.0),
+      width: double.infinity,
+      height: 60.0,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10.0),
+        child: OutlinedButton.icon(
+          label: Text(
+            text,
+            style: TextStyle(fontSize: 20.0),
+          ),
+          icon: Icon(Icons.add),
+          style: TextButton.styleFrom(
+            backgroundColor: Colors.blue[50],
+            side: BorderSide(width: 1.0, color: Colors.blue),
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(6.0)),
+            ),
+          ),
+          onPressed: onPressed,
+        ),
+      ),
     );
   }
 }

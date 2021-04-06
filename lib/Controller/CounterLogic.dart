@@ -10,10 +10,12 @@ class CounterLogic extends GetxController {
 
   void increase() {
     ++_count;
+    // update();
   }
 
   void decrease() {
     --_count;
+    // update();
   }
 }
 
@@ -22,6 +24,9 @@ class CounterLogicObx extends GetxController {
   var count = 1.obs;
 
   void increase() => ++count;
+  void decrease() {
+    --count;
+  }
 }
 
 class CounterLogicSeperatedState extends GetxController {
@@ -30,4 +35,5 @@ class CounterLogicSeperatedState extends GetxController {
   final CounterState counterState = CounterState();
 
   void increase() => ++counterState.count;
+  void decrease() => --counterState.count;
 }
